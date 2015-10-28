@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Atmel Studio Solution File, Format Version 11.00
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "P008_MCP23017_I2C_Expander", "P008_MCP23017_I2C_Expander\P008_MCP23017_I2C_Expander.cproj", "{304B31DE-BF5B-43FA-A9F3-211209F58543}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|AVR = Debug|AVR
+		Release|AVR = Release|AVR
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{304B31DE-BF5B-43FA-A9F3-211209F58543}.Debug|AVR.ActiveCfg = Debug|AVR
+		{304B31DE-BF5B-43FA-A9F3-211209F58543}.Debug|AVR.Build.0 = Debug|AVR
+		{304B31DE-BF5B-43FA-A9F3-211209F58543}.Release|AVR.ActiveCfg = Release|AVR
+		{304B31DE-BF5B-43FA-A9F3-211209F58543}.Release|AVR.Build.0 = Release|AVR
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
