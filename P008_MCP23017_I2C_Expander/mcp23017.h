@@ -143,9 +143,31 @@ enum{MCP23017_PORTA, MCP23017_PORTB} MCP23017_Port;
 /************************************************************************/
 /* API					                                                */
 /************************************************************************/
+void InitializeIoExpander(BYTE address, BankInUse bank);
+
+void SetPortDirectionReg(MCP23017_Port port, BYTE value);
+BYTE ReadPortDirectionReg(MCP23017_Port port);
+void SetPortPolarityReg(MCP23017_Port port, BYTE value);
+BYTE ReadPortPolarityReg(MCP23017_Port port);
+void SetIntOnChangeReg(MCP23017_Port port, BYTE value);
+BYTE ReadIntOnChangeReg(MCP23017_Port port);
+void SetDefaultCompareReg(MCP23017_Port port, BYTE value);
+BYTE ReadDefaultCompareReg(MCP23017_Port port);
+void SetIntControlReg(MCP23017_Port port, BYTE value);
+BYTE ReadIntControlReg(MCP23017_Port port);
+void SetIoConfigReg(MCP23017_Port port, BYTE value);
+BYTE ReadIoConfigReg(MCP23017_Port port);
+void SetPullupConfigReg(MCP23017_Port port, BYTE value);
+BYTE ReadPullupConfigReg(MCP23017_Port port);
+void SetPortReg(MCP23017_Port port, BYTE value);
+BYTE ReadPortReg(MCP23017_Port port);
+void SetOutputLatchReg(MCP23017_Port port, BYTE value);
+BYTE ReadOutputLatchReg(MCP23017_Port port);
 
 
-
+/* Read-only registers */
+BYTE ReadInterruptFlagReg(MCP23017_Port port);
+BYTE ReadInterruptCaptureReg(MCP23017_Port port);
 
 
 #endif /* _H_ */
