@@ -37,6 +37,9 @@ struct MCP23017
 	BYTE address;
 	BankInUse bank;
 	
+	/* Specifies if the IO Expander is initialized */
+	BOOL isInitialized;
+	
 }mcp23017;
 
 
@@ -44,6 +47,22 @@ struct MCP23017
 /* Functions
 /************************************************************************/	
 
+/***************************************************************************
+*  Function:		SetPortDirection(MCP23017_Port port, BYTE value)
+*  Description:		Sets the direction port register. When a bit is set the corresponding
+*				pin becomes an input and when its cleared the pin becomes an output.
+*  Receives:		MCP23017_Port port		:	The port on the MCP23017 (MCP23017_PORTA or MCP23017_PORTB).
+*				BYTE value			:	The value to set.
+*  Returns:		Nothing
+***************************************************************************/
+void InitializeIoExpander(BYTE address, BankInUse bank)
+{
+	mcp23017.address = address;
+	mcp23017.bank = bank;
+	
+	/* Initialization finished, set flag */
+	mcp23017.isInitialized = TRUE:
+}
 
 /***************************************************************************
   Function:		SetPortDirection(MCP23017_Port port, BYTE value)
@@ -53,7 +72,7 @@ struct MCP23017
 				BYTE value				:	The value to set.
   Returns:		Nothing
 ***************************************************************************/
-void SetPortDirection(MCP23017_Port port, BYTE value)
+void SetPortDirectionReg(MCP23017_Port port, BYTE value)
 {
 	if(BankInUse == BANK0)
 	{
@@ -86,7 +105,7 @@ void SetPortDirection(MCP23017_Port port, BYTE value)
   Receives:		MCP23017_Port port		:	The port on the MCP23017 (MCP23017_PORTA or MCP23017_PORTB).
   Returns:		Byte that was read.
 ***************************************************************************/
-BYTE ReadPortDirection(MCP23017_Port port)
+BYTE ReadPortDirectionReg(MCP23017_Port port)
 {
 	BYTE byteRead = 0;
 	
@@ -124,7 +143,7 @@ BYTE ReadPortDirection(MCP23017_Port port)
 				BYTE value				:	The value to set.
   Returns:		Nothing
 ***************************************************************************/
-void SetPortPolarity(MCP23017_Port port, BYTE value)
+void SetPortPolarityReg(MCP23017_Port port, BYTE value)
 {
 	if(BankInUse == BANK0)
 	{
@@ -156,7 +175,7 @@ void SetPortPolarity(MCP23017_Port port, BYTE value)
   Receives:		MCP23017_Port port		:	The port on the MCP23017 (MCP23017_PORTA or MCP23017_PORTB).
   Returns:		Byte that was read.
 ***************************************************************************/
-BYTE ReadPortDirection(MCP23017_Port port)
+BYTE ReadPortPolarityReg(MCP23017_Port port)
 {
 	BYTE byteRead = 0;
 	
@@ -194,7 +213,7 @@ BYTE ReadPortDirection(MCP23017_Port port)
 				BYTE value				:	The value to set.
   Returns:		Nothing
 ***************************************************************************/
-void SetIntOnChange(MCP23017_Port port, BYTE value)
+void SetIntOnChangeReg(MCP23017_Port port, BYTE value)
 {
 	if(BankInUse == BANK0)
 	{
@@ -226,7 +245,7 @@ void SetIntOnChange(MCP23017_Port port, BYTE value)
   Receives:		MCP23017_Port port		:	The port on the MCP23017 (MCP23017_PORTA or MCP23017_PORTB).
   Returns:		Byte that was read.
 ***************************************************************************/
-BYTE ReadIntOnChange(MCP23017_Port port)
+BYTE ReadIntOnChangeReg(MCP23017_Port port)
 {
 	BYTE byteRead = 0;
 	
@@ -535,6 +554,234 @@ BYTE ReadPullupConfigReg(MCP23017_Port port)
 		else if(port == MCP23017_PORTB)
 		{
 			byteRead = twi_read1byte(address, MCP23017_GPPUB_BANK1);
+		}
+	}
+	
+	return byteRead;
+}
+
+/***************************************************************************
+*  Function:		BYTE ReadInterruptFlagReg(MCP23017_Port port)
+*  Description:		The INTF register reflects the interrupt condition on the
+*					port pins of any pin that is enabled for interrupts via the
+*					GPINTEN register. A set bit indicates that the
+*					associated pin caused the interrupt.
+*					This is a read-only register.
+*  Receives:		MCP23017_Port port		:	The port on the MCP23017 (MCP23017_PORTA or MCP23017_PORTB).
+*  Returns:			Byte that was read.
+***************************************************************************/
+BYTE ReadInterruptFlagReg(MCP23017_Port port)
+{
+	BYTE byteRead = 0;
+	
+	if(BankInUse == BANK0)
+	{
+		if(port == MCP23017_PORTA)
+		{
+			byteRead = i2c_read1byte(address, MCP23017_INTFA);
+		}
+		else if(port == MCP23017_PORTB)
+		{
+			byteRead = i2c_read1byte(address, MCP23017_INTFB);
+		}
+	}
+	else if(BankInUse == BANK1)
+	{
+		if(port == MCP23017_PORTA)
+		{
+			byteRead = i2c_read1byte(address, MCP23017_INTFA_BANK1);
+		}
+		else if(port == MCP23017_PORTB)
+		{
+			byteRead = i2c_read1byte(address, MCP23017_INTFB_BANK1);
+		}
+	}
+	
+	return byteRead;
+}
+
+/***************************************************************************
+*  Function:		BYTE ReadInterruptCaptureReg(MCP23017_Port port)
+*  Description:		The INTCAP register captures the GPIO port value at
+*					the time the interrupt occurred. The register is read
+*					only and is updated only when an interrupt occurs. The
+*					register will remain unchanged until the interrupt is
+*					cleared via a read of INTCAP or GPIO.
+*  Receives:		MCP23017_Port port		:	The port on the MCP23017 (MCP23017_PORTA or MCP23017_PORTB).
+*  Returns:			Byte that was read.
+***************************************************************************/
+BYTE ReadInterruptCaptureReg(MCP23017_Port port)
+{
+	BYTE byteRead = 0;
+	
+	if(BankInUse == BANK0)
+	{
+		if(port == MCP23017_PORTA)
+		{
+			byteRead = i2c_read1byte(address, MCP23017_INTCAPA);
+		}
+		else if(port == MCP23017_PORTB)
+		{
+			byteRead = i2c_read1byte(address, MCP23017_INTCAPB);
+		}
+	}
+	else if(BankInUse == BANK1)
+	{
+		if(port == MCP23017_PORTA)
+		{
+			byteRead = i2c_read1byte(address, MCP23017_INTCAPA_BANK1);
+		}
+		else if(port == MCP23017_PORTB)
+		{
+			byteRead = i2c_read1byte(address, MCP23017_INTCAPB_BANK1);
+		}
+	}
+	
+	return byteRead;
+}
+
+/***************************************************************************
+*  Function:		SetPortReg(MCP23017_Port port, BYTE value)
+*  Description:		The GPIO register reflects the value on the port.
+*					Reading from this register reads the port. Writing to this
+*					register modifies the Output Latch (OLAT) register.
+*  Receives:		MCP23017_Port port		:	The port on the MCP23017 (MCP23017_PORTA or MCP23017_PORTB).
+*					BYTE value				:	The value to set.
+*  Returns:			Nothing
+***************************************************************************/
+void SetPortReg(MCP23017_Port port, BYTE value)
+{
+	if(BankInUse == BANK0)
+	{
+		if(port == MCP23017_PORTA)
+		{
+			i2c_send(address, MCP23017_GPIOA, value);
+		}
+		else if(port == MCP23017_PORTB)
+		{
+			i2c_send(address, MCP23017_GPIOB, value);
+		}
+	}
+	else if(BankInUse == BANK1)
+	{
+		if(port == MCP23017_PORTA)
+		{
+			i2c_send(address, MCP23017_GPIOA_BANK1, value);
+		}
+		else if(port == MCP23017_PORTB)
+		{
+			i2c_send(address, MCP23017_GPIOB_BANK1, value);
+		}
+	}
+}
+/***************************************************************************
+*  Function:		BYTE ReadPortReg(MCP23017_Port port)
+*  Description:		The GPIO register reflects the value on the port.
+*					Reading from this register reads the port. Writing to this
+*					register modifies the Output Latch (OLAT) register.
+*  Receives:		MCP23017_Port port		:	The port on the MCP23017 (MCP23017_PORTA or MCP23017_PORTB).
+*  Returns:			Byte that was read.
+***************************************************************************/
+BYTE ReadPortReg(MCP23017_Port port)
+{
+	BYTE byteRead = 0;
+	
+	if(BankInUse == BANK0)
+	{
+		if(port == MCP23017_PORTA)
+		{
+			byteRead = i2c_read1byte(address, MCP23017_GPIOA);
+		}
+		else if(port == MCP23017_PORTB)
+		{
+			byteRead = i2c_read1byte(address, MCP23017_GPIOB);
+		}
+	}
+	else if(BankInUse == BANK1)
+	{
+		if(port == MCP23017_PORTA)
+		{
+			byteRead = i2c_read1byte(address, MCP23017_GPIOA_BANK1);
+		}
+		else if(port == MCP23017_PORTB)
+		{
+			byteRead = i2c_read1byte(address, MCP23017_GPIOB_BANK1);
+		}
+	}
+	
+	return byteRead;
+}
+
+/***************************************************************************
+*  Function:		SetOutputLatchReg(MCP23017_Port port, BYTE value)
+*  Description:		The OLAT register provides access to the output
+*					latches. A read from this register results in a read of the
+*					OLAT and not the port itself. A write to this register
+*					modifies the output latches that modifies the pins
+*					configured as outputs.
+*  Receives:		MCP23017_Port port		:	The port on the MCP23017 (MCP23017_PORTA or MCP23017_PORTB).
+*					BYTE value				:	The value to set.
+*  Returns:			Nothing
+***************************************************************************/
+void SetOutputLatchReg(MCP23017_Port port, BYTE value)
+{
+	if(BankInUse == BANK0)
+	{
+		if(port == MCP23017_PORTA)
+		{
+			i2c_send(address, MCP23017_OLATA, value);
+		}
+		else if(port == MCP23017_PORTB)
+		{
+			i2c_send(address, MCP23017_OLATB, value);
+		}
+	}
+	else if(BankInUse == BANK1)
+	{
+		if(port == MCP23017_PORTA)
+		{
+			i2c_send(address, MCP23017_OLATA_BANK1, value);
+		}
+		else if(port == MCP23017_PORTB)
+		{
+			i2c_send(address, MCP23017_OLATB_BANK1, value);
+		}
+	}
+}
+/***************************************************************************
+*  Function:		BYTE ReadOutputLatchReg(MCP23017_Port port)
+*  Description:		The OLAT register provides access to the output
+*					latches. A read from this register results in a read of the
+*					OLAT and not the port itself. A write to this register
+*					modifies the output latches that modifies the pins
+*					configured as outputs.
+*  Receives:		MCP23017_Port port		:	The port on the MCP23017 (MCP23017_PORTA or MCP23017_PORTB).
+*  Returns:			Byte that was read.
+***************************************************************************/
+BYTE ReadOutputLatchReg(MCP23017_Port port)
+{
+	BYTE byteRead = 0;
+	
+	if(BankInUse == BANK0)
+	{
+		if(port == MCP23017_PORTA)
+		{
+			byteRead = i2c_read1byte(address, MCP23017_OLATA);
+		}
+		else if(port == MCP23017_PORTB)
+		{
+			byteRead = i2c_read1byte(address, MCP23017_OLATB);
+		}
+	}
+	else if(BankInUse == BANK1)
+	{
+		if(port == MCP23017_PORTA)
+		{
+			byteRead = i2c_read1byte(address, MCP23017_OLATA_BANK1);
+		}
+		else if(port == MCP23017_PORTB)
+		{
+			byteRead = i2c_read1byte(address, MCP23017_OLATB_BANK1);
 		}
 	}
 	
