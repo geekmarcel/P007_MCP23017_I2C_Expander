@@ -1,13 +1,13 @@
 /*--------------------------------------------------------------------------------------------------------------------------------------------------------
- * Project: 		MCP23017 I2C Libary
+ * Project: 		MCP23017 TWI Libary
  * Hardware:		Arduino UNO
  * Micro:			ATMEGA328P
- * IDE:			Atmel Studio 6.2
+ * IDE:				Atmel Studio 6.2
  *
  * Name:    		mcp23017.h
- * Purpose: 		MCP23017 I2C Header
+ * Purpose: 		MCP23017 TWI Header
  * Date:			28-10-2015
- * Author:		Marcel van der Ven
+ * Author:			Marcel van der Ven
  *
  * Hardware setup:	
  *
